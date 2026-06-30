@@ -1,80 +1,92 @@
-# Wobb Frontend Assignment
+# Wobb Vibe Coder Intern - Frontend Assignment
 
-A starter influencer search application built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. This project is intentionally left in a rough-but-working state for candidates to improve.
+A highly polished, premium influencer search and campaign builder application built with **React 19**, **TypeScript**, **Vite**, and **Tailwind CSS**. 
 
-## Getting Started
+**Live Repository:** [alibarnes18/wobb-frontend-assignment](https://github.com/alibarnes18/wobb-frontend-assignment)
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Open [http://localhost:5173](http://localhost:5173) to view the app.
+## 🚀 Getting Started
 
-## What's Included
+To run the application locally, follow these steps:
 
-- **Search / Dashboard** — filter influencers by platform (Instagram, YouTube, TikTok) and search by username or full name
-- **Profile Details** — click a profile to view extended data loaded from individual JSON files
-- **Routing** — `react-router-dom` with `/` (search) and `/profile/:username` (details)
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/alibarnes18/wobb-frontend-assignment.git
+   cd wobb-frontend-assignment
+   ```
 
-Sample data lives in:
+2. **Install dependencies:**
+   We use React 19. Since some drag-and-drop libraries have strict peer dependency checks, install using `--legacy-peer-deps`:
+   ```bash
+   npm install --legacy-peer-deps
+   ```
 
-- `src/assets/data/search/` — platform search results (10 profiles each)
-- `src/assets/data/profiles/` — detailed profile JSON per username
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
 
-## How to Submit
+4. **Verify the production build and linting:**
+   ```bash
+   npm run build
+   ```
+   ```bash
+   npm run lint
+   ```
 
-1. **Download or clone** this starter project to your machine.
-2. **Create a new repository** on your own GitHub account. Do not fork the original assignment repo — push your work to a repo you own.
-3. Complete the tasks below and push your changes to that repository.
-4. **Share the public GitHub repository URL** with us as your submission.
+---
 
-### Deadline (strict)
+## 🛠️ What Was Changed
 
-- **Due:** **2 July 2026, 2:00 PM IST** (Indian Standard Time, UTC+5:30)
-- **Any git commits made after this deadline will disqualify your submission.** We will only consider the repository state as of the deadline; late commits will not be reviewed.
-- Make sure your final work is pushed **before** the cutoff.
+We transformed the starter application from a basic, functional prototype into a high-end SaaS product.
 
-## AI Usage
+### 1. Bug Fixes
+* **Case-Sensitive Username Search:** Fixed in `src/utils/dataHelpers.ts`. The username filtering is now case-insensitive, matching the behavior of the fullname filter.
+* **Incorrect Engagement Rate:** Fixed in `src/pages/ProfileDetailPage.tsx`. The engagement rate was previously multiplied by `10000` (e.g. rendering `125.51%` instead of `1.26%`). It now correctly utilizes the `formatEngagementRate` helper.
+* **Broken Engagements Card:** Fixed in `src/pages/ProfileDetailPage.tsx`. The card labeled **Engagements** was displaying the engagement rate instead of the actual total engagement count (`user.engagements`). It now renders the formatted total engagements count.
+* **TypeScript 6.0 `baseUrl` Deprecation:** Removed `"baseUrl": "."` from `tsconfig.app.json` and `tsconfig.node.json` to resolve TS5101 deprecation warnings and ensure compatibility with modern TS compilers without requiring temporary suppression flags.
 
-You may use any AI tools (Cursor, ChatGPT, Claude, GitHub Copilot, etc.). We are evaluating your final solution and engineering decisions.
+### 2. State Management (Zustand)
+* Swapped the stubbed React Context pattern with a global **Zustand** store (`src/store/useListStore.ts`).
+* Integrated Zustand's **`persist` middleware** to ensure that the campaign shortlist is saved in the browser's `localStorage` and persists across page refreshes.
+* Implemented duplicate prevention logic during additions and a custom `reorderProfiles` method to support drag-and-drop sorting.
 
-## Your Tasks
+### 3. UI/UX Redesign (SaaS Creator Dashboard)
+* **Dark-Mode-First Aesthetic:** Designed a high-end interface using a zinc-950 background, custom scrollbars, glassmorphic panels, and subtle borders.
+* **Responsive CSS Grid:** Replaced the single-column list with a responsive grid (1 column on mobile, 2 on tablet, 3 on desktop) of creator cards.
+* **Campaign Builder Sidebar:** Developed a sliding drawer that displays:
+  * Shortlisted creators.
+  * Real-time aggregate statistics: **Total Reach** (sum of followers), **Average Engagement Rate**, and **Platform Distribution**.
+  * Dynamic action buttons: **Copy Summary** (copies a formatted text overview of the campaign to the clipboard) and **Export JSON** (downloads the list as a JSON file).
+* **Interactive Toggles:** Enabled the "Add to List" button on both the search cards and the details page. When clicked, it turns into a blue "Added" button, which dynamically transitions to a red "Remove" button on hover.
+* **Platform-Specific Themes:** Styled active tabs and badges with platform-specific gradients (Instagram pink, YouTube red, TikTok cyan/indigo).
+* **Creator DNA Analytics:** Redesigned the profile detail page into a full analytics report. It now visualizes rich data from the JSON files that was previously ignored: **Top Hashtags**, **Top Mentions**, **Interests**, and **Similar Creators**.
 
-Complete the following as part of your submission:
+---
 
-1. **Find and fix all bugs and quality issues** — the codebase contains intentional bugs and quality issues. Identify and resolve them.
+## 📦 Libraries Added
 
-2. **Completely redesign the UI/UX** — replace the basic layout with a polished, modern interface. Focus on usability, visual hierarchy, and delight.
+* **`zustand`**: For clean, boilerplate-free global state management with built-in persistence.
+* **`lucide-react`**: For high-quality, consistent, and modern iconography.
+* **`@hello-pangea/dnd`**: A maintained, React 19-compatible fork of `react-beautiful-dnd` used to enable drag-and-drop reordering of the shortlist.
 
-3. **Replace React Context with Zustand** — when you implement state management for the selected list, use [Zustand](https://github.com/pmndrs/zustand) instead of React Context.
+---
 
-4. **Implement "Select profile & Add to List"** — the disabled "Add to List" button is a stub. Build the full feature:
-   - Select / add profiles to a persistent list
-   - View and manage the selected list
-   - Handle duplicates appropriately
+## 🧠 Assumptions & Trade-offs
 
-5. **Improve code quality and project structure** — refactor as needed, add proper types, and follow React best practices.
+### Assumptions
+* **Local Data Sources:** Since the data is loaded from local static JSON files, we assumed that no remote API calls were needed. However, the UI was built with loading states (`loaded`, spinner) to easily adapt to asynchronous backend endpoints in the future.
+* **React 19 Compatibility:** The project runs on React 19. We chose `@hello-pangea/dnd` over the original `react-beautiful-dnd` because the latter is deprecated and throws runtime errors on React 19 due to the removal of legacy React internal methods.
 
-6. **Optimize performance** — apply sensible optimizations where appropriate.
+### Trade-offs
+* **Static Import vs. Lazy Loading:** For search results, the JSON files are imported statically. This is extremely fast for 10-30 items, but for larger datasets, we would implement lazy loading or server-side pagination.
+* **Tailwind v4 `@import`:** We stayed with the Tailwind v4 standard imported via CSS, avoiding heavy configuration files to keep the build process lightweight and fast.
 
-7. **Use any libraries you need** — you are not limited to the current stack. Choose tools that help you deliver a great result (UI kits, state managers, testing libraries, etc.).
+---
 
-## Scripts
+## 🔮 Future Improvements
 
-| Command        | Description              |
-| -------------- | ------------------------ |
-| `npm run dev`  | Start development server |
-| `npm run build`| Production build         |
-| `npm run lint` | Run ESLint               |
-
-## Submission Notes
-
-- Document any assumptions or trade-offs in your README
-- Ensure `npm run build` passes before submitting
-- Focus on demonstrating your judgment — not every possible feature needs to be built, but the core assignment items should be addressed thoughtfully
-- Double-check that your repo is public (or that we have access) and that the link is included in your submission
-- Please make meaningful commits throughout your work. We may review your commit history.
-- **Bonus:** Deploying the app (e.g. Vercel, Netlify, GitHub Pages) is optional but will be considered a plus — include the live URL in your submission if you do
-
-Good luck!
+1. **Analytical Charts:** Add visual graphs (e.g., using `recharts` or `chart.js`) to show historical follower growth and engagement trends using the `stat_history` array in the profile JSONs.
+2. **Advanced Search Filters:** Add sliders to filter creators by range (e.g., minimum 100K followers, minimum 2% engagement rate).
+3. **Multi-Campaign Support:** Allow users to create and switch between multiple campaign lists (e.g., "Q3 Instagram Launch", "TikTok Brand Awareness").
