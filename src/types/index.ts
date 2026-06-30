@@ -36,6 +36,10 @@ export interface FullUserProfile extends UserProfileSummary {
   avg_reels_plays?: number;
   gender?: string;
   age_group?: string;
+  top_hashtags?: { tag: string; weight: number }[];
+  top_mentions?: { tag: string; weight: number }[];
+  interests?: { id: number; name: string }[];
+  similar_users?: (UserProfileSummary & { score?: number })[];
 }
 
 export interface ProfileDetailResponse {
